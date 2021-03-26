@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'newWindow.dart';
+import 'calendarView.dart';
+import 'notesBottomBar.dart';
 
 void main() {
   initializeDateFormatting().then((_) => runApp(MyApp()));
@@ -28,12 +30,21 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  CalendarController _controller;
+  int _currentIndex = 0;
 
+  final List<Widget> pages = [
+    CalendarView(),
+    NotesHomePage(),
+  ];
   @override
   void initState() {
     super.initState();
-    _controller = CalendarController();
+  }
+
+  void onTabTapped(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
   }
 
   @override
@@ -61,42 +72,20 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ))),
       ]),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            TableCalendar(
-              locale: 'pl_PL',
-              builders: CalendarBuilders(
-                  todayDayBuilder: (context, date, events) => Container(
-                      margin: const EdgeInsets.only(top: 20, bottom: 20),
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: Colors.purple,
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                      child: Text(
-                        date.day.toString(),
-                        style: TextStyle(color: Colors.white),
-                      )),
-                  selectedDayBuilder: (context, date, events) => Container(
-                      margin: const EdgeInsets.only(top: 20, bottom: 20),
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: Colors.red,
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                      child: Text(
-                        date.day.toString(),
-                        style: TextStyle(color: Colors.white),
-                      ))),
-              rowHeight: 100,
-              headerStyle: HeaderStyle(formatButtonVisible: false),
-              startingDayOfWeek: StartingDayOfWeek.monday,
-              calendarController: _controller,
-            ),
-          ],
-        ),
+      body: pages[_currentIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        onTap: onTabTapped,
+        currentIndex: _currentIndex,
+        items: [
+          new BottomNavigationBarItem(
+            icon: Icon(Icons.calendar_today),
+            label: 'Kalendarz',
+          ),
+          new BottomNavigationBarItem(
+            icon: Icon(Icons.article_rounded),
+            label: 'Notatki',
+          ),
+        ],
       ),
     );
   }
