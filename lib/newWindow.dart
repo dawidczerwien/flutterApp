@@ -29,7 +29,10 @@ class _NewScreenState extends State<NewScreen> {
     final ref = referenceDatabase.reference();
 
     return Scaffold(
-        appBar: AppBar(title: Text('New Screen')),
+        appBar: AppBar(
+          title: Text('New Screen'),
+          backgroundColor: Color(0xFF243B55),
+        ),
         body: SingleChildScrollView(
           child: Column(
             children: [

@@ -8,7 +8,6 @@ class NotesHomePage extends StatefulWidget {
 }
 
 class _NotesHomePage extends State<NotesHomePage> {
-  int _counter = 0;
   Query _ref;
 
   @override
@@ -22,11 +21,17 @@ class _NotesHomePage extends State<NotesHomePage> {
 
   Widget _buildContactItem({Map notes}) {
     return Container(
-        padding: EdgeInsets.only(top: 35, left: 15),
+        decoration: new BoxDecoration(
+          border: Border.all(color: Colors.brown, width: 5),
+          color: Colors.yellow,
+        ),
+        padding: EdgeInsets.only(top: 10, bottom: 10, left: 15, right: 10),
+        margin: EdgeInsets.only(top: 20, left: 20, right: 20),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Icon(Icons.event_note),
             Text(
               notes['title'],
               style: TextStyle(fontSize: 22),
@@ -42,7 +47,21 @@ class _NotesHomePage extends State<NotesHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFFc42505F),
       body: Container(
+          decoration: BoxDecoration(
+              gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            stops: [
+              0.2,
+              0.8,
+            ],
+            colors: [
+              Color(0xFF141E30),
+              Color(0xFF243B55),
+            ],
+          )),
           child: FirebaseAnimatedList(
               query: _ref,
               itemBuilder: (BuildContext context, DataSnapshot snapshot,
