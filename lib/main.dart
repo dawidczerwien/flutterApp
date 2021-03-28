@@ -62,16 +62,15 @@ class _HomePageState extends State<HomePage> {
                       print("add");
                     },
                     child: new Container(
-                      width: 50,
-                      decoration: new BoxDecoration(
-                        color: Colors.transparent,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(
-                        Icons.add_box,
-                        size: 46.0,
-                      ),
-                    ))),
+                        width: 50,
+                        decoration: new BoxDecoration(
+                          color: Colors.transparent,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.add_box,
+                          size: 46.0,
+                        )))),
           ]),
       body: pages[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(

@@ -30,7 +30,7 @@ class _NewScreenState extends State<NewScreen> {
 
     return Scaffold(
         appBar: AppBar(
-          title: Text('New Screen'),
+          title: Text('Nowa notatka'),
           backgroundColor: Color(0xFF243B55),
         ),
         body: SingleChildScrollView(

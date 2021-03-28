@@ -1,3 +1,4 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -9,10 +10,55 @@ class CalendarView extends StatefulWidget {
 class _CalendarView extends State<CalendarView> {
   CalendarController _controller;
 
+  Map<DateTime, List> mapFetch = {};
+
+  void getData() async {
+    var db = FirebaseDatabase.instance.reference().child("Notatki");
+    db.once().then((DataSnapshot snapshot) {
+      Map<dynamic, dynamic> values = snapshot.value;
+      values.forEach((key, values) {
+        DateTime date = new DateTime(
+            DateTime.parse(values["time"]).year,
+            DateTime.parse(values["time"]).month,
+            DateTime.parse(values["time"]).day);
+        print(date);
+        //print(mapFetch[DateTime.parse(values["time"])]);
+        if (mapFetch[date] != null) {
+          print("duplicate");
+          mapFetch[date].add(values["title"]);
+        } else {
+          mapFetch[date] = [values["title"]];
+        }
+      });
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     _controller = CalendarController();
+    getData();
+  }
+
+  Widget _buildEventsMarker(DateTime date, List events) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      decoration: BoxDecoration(
+        shape: BoxShape.rectangle,
+        color: Colors.indigoAccent,
+      ),
+      width: 26.0,
+      height: 16.0,
+      child: Center(
+        child: Text(
+          '${events.length}',
+          style: TextStyle().copyWith(
+            color: Colors.white,
+            fontSize: 12.0,
+          ),
+        ),
+      ),
+    );
   }
 
   @override
@@ -39,7 +85,23 @@ class _CalendarView extends State<CalendarView> {
                 )),
                 child: TableCalendar(
                   locale: 'pl_PL',
+                  events: mapFetch,
                   builders: CalendarBuilders(
+                    markersBuilder: (context, date, events, holidays) {
+                      final children = <Widget>[];
+
+                      if (events.isNotEmpty) {
+                        children.add(
+                          Positioned(
+                            right: 4,
+                            bottom: 15,
+                            child: _buildEventsMarker(date, events),
+                          ),
+                        );
+                      }
+
+                      return children;
+                    },
                     dayBuilder: (context, date, events) => Container(
                         margin: const EdgeInsets.only(top: 20, bottom: 20),
                         alignment: Alignment.center,
@@ -59,8 +121,21 @@ class _CalendarView extends State<CalendarView> {
                           style: TextStyle(color: Colors.white),
                         )),
                   ),
-                  rowHeight: 100,
-                  headerStyle: HeaderStyle(formatButtonVisible: false),
+                  rowHeight: 95,
+                  headerStyle: HeaderStyle(
+                    formatButtonVisible: false,
+                    centerHeaderTitle: true,
+                    leftChevronIcon: Icon(
+                      Icons.chevron_left,
+                      color: Colors.white,
+                    ),
+                    rightChevronIcon: Icon(
+                      Icons.chevron_right,
+                      color: Colors.white,
+                    ),
+                    titleTextStyle:
+                        TextStyle(color: Colors.white, fontSize: 20),
+                  ),
                   startingDayOfWeek: StartingDayOfWeek.monday,
                   calendarController: _controller,
                 )),
