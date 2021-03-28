@@ -12,7 +12,7 @@ class _CalendarView extends State<CalendarView> {
 
   Map<DateTime, List> mapFetch = {};
 
-  void getData() async {
+  void getData() {
     var db = FirebaseDatabase.instance.reference().child("Notatki");
     db.once().then((DataSnapshot snapshot) {
       Map<dynamic, dynamic> values = snapshot.value;
