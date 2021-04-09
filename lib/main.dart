@@ -1,96 +1,53 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/date_symbol_data_local.dart';
-import 'newWindow.dart';
-import 'calendarView.dart';
-import 'notesBottomBar.dart';
+import 'package:flutter_app1/homeWindow.dart';
+import 'package:provider/provider.dart';
+import 'Authentication.dart';
 
-void main() {
-  initializeDateFormatting().then((_) => runApp(MyApp()));
+import 'loginWindow.dart';
+import 'package:intl/date_symbol_data_local.dart';
+
+Future<void> main() async {
+  initializeDateFormatting();
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Calendar',
-      theme: ThemeData(
-        primarySwatch: Colors.red,
+    return MultiProvider(
+      providers: [
+        Provider<AuthenticationService>(
+          create: (_) => AuthenticationService(FirebaseAuth.instance),
+        ),
+        StreamProvider(
+          create: (context) =>
+              context.read<AuthenticationService>().authStateChanges,
+        )
+      ],
+      child: MaterialApp(
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+          visualDensity: VisualDensity.adaptivePlatformDensity,
+        ),
+        home: AuthenticationWrapper(),
       ),
-      home: HomePage(),
     );
   }
 }
 
-class HomePage extends StatefulWidget {
-  @override
-  _HomePageState createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  int _currentIndex = 0;
-
-  final List<Widget> pages = [
-    CalendarView(),
-    NotesHomePage(),
-  ];
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  void onTabTapped(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
-  }
-
+class AuthenticationWrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-          title: Text('My Calendar'),
-          backgroundColor: Color(0xFF243B55),
-          actions: <Widget>[
-            Padding(
-                padding: EdgeInsets.only(right: 20.0),
-                child: GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).push(
-                          MaterialPageRoute(builder: (context) => NewScreen()));
-                      print("add");
-                    },
-                    child: new Container(
-                        width: 50,
-                        decoration: new BoxDecoration(
-                          color: Colors.transparent,
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          Icons.add_box,
-                          size: 46.0,
-                        )))),
-          ]),
-      body: pages[_currentIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        onTap: onTabTapped,
-        currentIndex: _currentIndex,
-        unselectedItemColor: Colors.white,
-        backgroundColor: Color(0xFF141E30),
-        items: [
-          new BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_today),
-            label: 'Kalendarz',
-          ),
-          new BottomNavigationBarItem(
-            icon: Icon(
-              Icons.article_rounded,
-            ),
-            label: 'Notatki',
-          ),
-        ],
-      ),
-    );
+    final firebaseUser = context.watch<User>();
+
+    if (firebaseUser != null) {
+      return HomePage();
+    }
+    return LoginPage();
   }
 }
