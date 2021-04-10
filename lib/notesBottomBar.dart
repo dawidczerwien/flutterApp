@@ -39,7 +39,8 @@ class _NotesHomePage extends State<NotesHomePage> {
             Text(
               notes['time'].split(' ')[0],
               style: TextStyle(fontSize: 15),
-            )
+            ),
+            notes['image'] != null ? Image.network(notes['image']) : Text('')
           ],
         ));
   }

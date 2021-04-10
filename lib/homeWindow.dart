@@ -15,10 +15,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _currentIndex = 0;
 
-  final List<Widget> pages = [
-    CalendarView(),
-    NotesHomePage(),
-  ];
+  final List<Widget> pages = [CalendarView(), NotesHomePage(), NewScreen()];
   @override
   void initState() {
     super.initState();
@@ -42,9 +39,6 @@ class _HomePageState extends State<HomePage> {
                 child: GestureDetector(
                     onTap: () {
                       context.read<AuthenticationService>().signOut();
-                      Navigator.of(context).push(
-                          MaterialPageRoute(builder: (context) => NewScreen()));
-                      print("add");
                     },
                     child: new Container(
                         width: 50,
@@ -53,7 +47,7 @@ class _HomePageState extends State<HomePage> {
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
-                          Icons.add_box,
+                          Icons.cancel,
                           size: 46.0,
                         )))),
           ]),
@@ -74,6 +68,12 @@ class _HomePageState extends State<HomePage> {
             ),
             label: 'Notatki',
           ),
+          new BottomNavigationBarItem(
+            icon: Icon(
+              Icons.add_box,
+            ),
+            label: 'Nowa notatka',
+          )
         ],
       ),
     );
