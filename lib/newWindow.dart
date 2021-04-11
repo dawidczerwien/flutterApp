@@ -86,23 +86,56 @@ class _NewScreenState extends State<NewScreen> {
                   });
                 }),
           ),
-          IconButton(
-              onPressed: () {
-                getImage();
-              },
-              icon: Icon(Icons.photo_library)),
-          TextButton(
-              onPressed: () {
-                uploadPic().then((value) {
-                  ref.child("Notatki").push().set({
-                    'title': myController.text,
-                    'time': _chosenDateTime.toString(),
-                    'image': value
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              IconButton(
+                  onPressed: () {
+                    getImage();
+                  },
+                  icon: Icon(Icons.photo_library)),
+              CircleAvatar(
+                radius: 90,
+                backgroundColor: Color(0xFF243B55),
+                child: _image != null
+                    ? ClipRRect(
+                        borderRadius: BorderRadius.circular(100),
+                        child: Image.file(
+                          _image,
+                          width: 170,
+                          height: 170,
+                          fit: BoxFit.fitHeight,
+                        ),
+                      )
+                    : Container(
+                        decoration: BoxDecoration(
+                            color: Colors.grey[200],
+                            borderRadius: BorderRadius.circular(100)),
+                        width: 170,
+                        height: 170,
+                        child: Icon(
+                          Icons.camera_alt,
+                          color: Colors.grey[800],
+                        ),
+                      ),
+              )
+            ],
+          ),
+          new Container(
+            margin: const EdgeInsets.only(top: 20.0),
+            child: ElevatedButton(
+                onPressed: () {
+                  uploadPic().then((value) {
+                    ref.child("Notatki").push().set({
+                      'title': myController.text,
+                      'time': _chosenDateTime.toString(),
+                      'image': value
+                    });
+                    myController.text = '';
                   });
-                  myController.text = '';
-                });
-              },
-              child: Text('Save to firebase')),
+                },
+                child: Text('Save to firebase')),
+          )
         ],
       ),
     ));

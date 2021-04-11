@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -12,7 +14,7 @@ class _CalendarView extends State<CalendarView> {
 
   Map<DateTime, List> mapFetch = {};
 
-  void getData() {
+  Future<void> getData() async {
     var db = FirebaseDatabase.instance.reference().child("Notatki");
     db.once().then((DataSnapshot snapshot) {
       Map<dynamic, dynamic> values = snapshot.value;
@@ -35,14 +37,19 @@ class _CalendarView extends State<CalendarView> {
 
   @override
   void initState() {
-    super.initState();
-    _controller = CalendarController();
-    getData();
+    //_controller = CalendarController();
+    getData().then((value) {
+      setState(() {
+        _controller = CalendarController();
+      });
+    }).then((value) {
+      super.initState();
+    });
   }
 
   Widget _buildEventsMarker(DateTime date, List events) {
     return AnimatedContainer(
-      duration: const Duration(milliseconds: 300),
+      duration: const Duration(milliseconds: 1),
       decoration: BoxDecoration(
         shape: BoxShape.rectangle,
         color: Colors.indigoAccent,
