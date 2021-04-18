@@ -1,7 +1,7 @@
-import 'dart:async';
-
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class CalendarView extends StatefulWidget {
@@ -14,8 +14,9 @@ class _CalendarView extends State<CalendarView> {
 
   Map<DateTime, List> mapFetch = {};
 
-  Future<void> getData() async {
-    var db = FirebaseDatabase.instance.reference().child("Notatki");
+  void getData() {
+    final firebaseUser = Provider.of<User>(context, listen: false);
+    var db = FirebaseDatabase.instance.reference().child(firebaseUser.uid);
     db.once().then((DataSnapshot snapshot) {
       Map<dynamic, dynamic> values = snapshot.value;
       values.forEach((key, values) {
@@ -23,10 +24,7 @@ class _CalendarView extends State<CalendarView> {
             DateTime.parse(values["time"]).year,
             DateTime.parse(values["time"]).month,
             DateTime.parse(values["time"]).day);
-        print(date);
-        //print(mapFetch[DateTime.parse(values["time"])]);
         if (mapFetch[date] != null) {
-          print("duplicate");
           mapFetch[date].add(values["title"]);
         } else {
           mapFetch[date] = [values["title"]];
@@ -37,14 +35,9 @@ class _CalendarView extends State<CalendarView> {
 
   @override
   void initState() {
-    //_controller = CalendarController();
-    getData().then((value) {
-      setState(() {
-        _controller = CalendarController();
-      });
-    }).then((value) {
-      super.initState();
-    });
+    getData();
+    _controller = CalendarController();
+    super.initState();
   }
 
   Widget _buildEventsMarker(DateTime date, List events) {

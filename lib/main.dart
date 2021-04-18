@@ -10,8 +10,6 @@ import 'package:intl/date_symbol_data_local.dart';
 
 Future<void> main() async {
   await initializeDateFormatting();
-  // Data binding modyfikacja sprzężonych komponentów aplikacji (np. wpisanie tekstu do text boxa) sprawi,
-  // że rekord w bazie danych zostanie odpowiednio uaktualniony, praktycznie w czasie rzeczywistym
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   runApp(MyApp());

@@ -55,8 +55,7 @@ class RegisterPage extends StatelessWidget {
                           email: email.text.trim(),
                           password: passwd.text.trim(),
                         )
-                        .then((value) =>
-                            context.read<AuthenticationService>().signOut());
+                        .then((value) => Navigator.pop(context));
                   },
                   child: Text(
                     'Register',

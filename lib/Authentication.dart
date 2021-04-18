@@ -5,6 +5,13 @@ class AuthenticationService {
   final FirebaseAuth _firebaseAuth;
 
   AuthenticationService(this._firebaseAuth);
+  final FirebaseAuth auth = FirebaseAuth.instance;
+
+  String inputData() {
+    final User user = auth.currentUser;
+    final email = user.email;
+    return email;
+  }
 
   Stream<User> get authStateChanges => _firebaseAuth.idTokenChanges();
 

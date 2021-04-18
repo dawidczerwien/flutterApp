@@ -1,6 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:provider/provider.dart';
 
 class NotesHomePage extends StatefulWidget {
   @override
@@ -12,14 +14,15 @@ class _NotesHomePage extends State<NotesHomePage> {
 
   @override
   void initState() {
+    final firebaseUser = Provider.of<User>(context, listen: false);
     super.initState();
     _ref = FirebaseDatabase.instance
         .reference()
-        .child('Notatki')
+        .child(firebaseUser.uid)
         .orderByChild('time');
   }
 
-  Widget _buildContactItem({Map notes}) {
+  Widget _buildContactItem({Map notes, var key}) {
     return Container(
         decoration: new BoxDecoration(
           border: Border.all(color: Colors.brown, width: 5),
@@ -31,7 +34,23 @@ class _NotesHomePage extends State<NotesHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(Icons.event_note),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Icon(Icons.event_note),
+                IconButton(
+                    onPressed: () {
+                      final firebaseUser =
+                          Provider.of<User>(context, listen: false);
+                      FirebaseDatabase.instance
+                          .reference()
+                          .child(firebaseUser.uid)
+                          .child(key)
+                          .remove();
+                    },
+                    icon: Icon(Icons.delete)),
+              ],
+            ),
             Text(
               notes['title'],
               style: TextStyle(fontSize: 22),
@@ -68,9 +87,8 @@ class _NotesHomePage extends State<NotesHomePage> {
               itemBuilder: (BuildContext context, DataSnapshot snapshot,
                   Animation<double> animation, int index) {
                 Map notes = snapshot.value;
-                return _buildContactItem(notes: notes);
+                return _buildContactItem(notes: notes, key: snapshot.key);
               })),
-      // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }

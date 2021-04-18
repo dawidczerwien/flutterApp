@@ -1,17 +1,15 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:path/path.dart';
+import 'package:provider/provider.dart';
 
 class NewScreen extends StatefulWidget {
-  final FirebaseApp app;
-  NewScreen({this.app});
-
   @override
   _NewScreenState createState() => _NewScreenState();
 }
@@ -40,7 +38,6 @@ class _NewScreenState extends State<NewScreen> {
         _image = File(pickedFile.path);
       } else {
         _image = null;
-        print('No image selected.');
       }
     });
   }
@@ -53,7 +50,7 @@ class _NewScreenState extends State<NewScreen> {
     Reference firebaseStorageRef =
         FirebaseStorage.instance.ref().child(fileName);
     UploadTask uploadTask = firebaseStorageRef.putFile(_image);
-    TaskSnapshot taskSnapshot = await uploadTask;
+    await uploadTask;
     String url = await firebaseStorageRef.getDownloadURL();
     setState(() {
       print("Profile Picture uploaded: $url");
@@ -125,8 +122,11 @@ class _NewScreenState extends State<NewScreen> {
             margin: const EdgeInsets.only(top: 20.0),
             child: ElevatedButton(
                 onPressed: () {
+                  final firebaseUser =
+                      Provider.of<User>(context, listen: false);
+
                   uploadPic().then((value) {
-                    ref.child("Notatki").push().set({
+                    ref.child(firebaseUser.uid).push().set({
                       'title': myController.text,
                       'time': _chosenDateTime.toString(),
                       'image': value

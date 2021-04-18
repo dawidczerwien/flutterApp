@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-//import 'package:intl/date_symbol_data_local.dart';
 import 'newWindow.dart';
 import 'calendarView.dart';
-import 'notesBottomBar.dart';
+import 'notesWindow.dart';
 import 'Authentication.dart';
-
 import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
@@ -14,7 +12,6 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _currentIndex = 0;
-
   final List<Widget> pages = [CalendarView(), NotesHomePage(), NewScreen()];
   @override
   void initState() {
